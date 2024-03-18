@@ -1,0 +1,66 @@
+name: "Bug report"
+description: Create a report to help us fix your issue
+body:
+- type: markdown
+  attributes:
+    value: |
+      **Is this the right place for my bug report?**
+      This repository contains the Linux kernel used on the BridgEth Base.
+      If you believe that the issue you are seeing is kernel-related, this is the right place.
+
+- type: textarea
+  id: description
+  attributes:
+    label: Describe the bug
+    description: |
+      Add a clear and concise description of what you think the bug is.
+  validations:
+    required: true
+
+- type: textarea
+  id: reproduce
+  attributes:
+    label: Steps to reproduce the behaviour
+    description: |
+      List the steps required to reproduce the issue.
+  validations:
+    required: true
+
+- type: dropdown
+  id: model
+  attributes:
+    label: Device (s)
+    description: On which device you are facing the bug?
+    multiple: true
+    options:
+      - BridgEth Base rev. 1
+      - Other
+  validations:
+    required: true
+
+- type: textarea
+  id: system
+  attributes:
+    label: System
+    description: |
+      Copy and paste the results of the raspinfo command in to this section.
+      Alternatively, copy and paste a pastebin link, or add answers to the following questions:
+      * Which OS and version (`cat /etc/rpi-issue`)?
+      * Which firmware version (`vcgencmd version`)?
+      * Which kernel version (`uname -a`)?
+  validations:
+    required: true
+
+- type: textarea
+  id: logs
+  attributes:
+    label: Logs
+    description: |
+      If applicable, add the relevant output from `dmesg` or similar.
+
+- type: textarea
+  id: additional
+  attributes:
+    label: Additional context
+    description: |
+      Add any other relevant context for the problem.
