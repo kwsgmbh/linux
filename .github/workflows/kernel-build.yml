@@ -20,17 +20,17 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: bcm2711
+          - name: BridgEth-Base
             arch: arm
             defconfig: bcm2711_defconfig
             kernel: kernel7l
 
-          - name: bcm2711_arm64
+          - name: BridgEth-Base_arm64
             arch: arm64
             defconfig: bcm2711_defconfig
             kernel: kernel8
 
-          - name: bcm2712
+          - name: BridgEth-Base-5
             arch: arm64
             defconfig: bcm2712_defconfig
             kernel: kernel_2712
