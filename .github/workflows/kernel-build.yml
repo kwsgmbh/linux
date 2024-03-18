@@ -4,11 +4,11 @@ on:
   pull_request:
     paths-ignore:
       - '.github/**'
-    branches: [ "main" ]
+    branches: [ "BRBASE-*" ]
   push:
     paths-ignore:
       - '.github/**'
-    branches: [ "main" ]
+    branches: [ "BRBASE-*" ]
   workflow_dispatch:
 
 env:

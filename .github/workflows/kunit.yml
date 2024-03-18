@@ -2,10 +2,10 @@ name: KUnit Tests
 
 on:
   pull_request:
-    branches: [ "main"]
+    branches: [ "BRBASE-*"]
 
   push:
-    branches: [ "main"]
+    branches: [ "BRBASE-*"]
 
 jobs:
   core:
