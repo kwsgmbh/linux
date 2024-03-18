@@ -2,10 +2,14 @@ name: KUnit Tests
 
 on:
   pull_request:
-    branches: [ "BRBASE-*"]
-
+    paths-ignore:
+      - '.github/**'
+    branches: [ "BRBASE-*" ]
   push:
-    branches: [ "BRBASE-*"]
+    paths-ignore:
+      - '.github/**'
+    branches: [ "BRBASE-*" ]
+  workflow_dispatch:
 
 jobs:
   core:
