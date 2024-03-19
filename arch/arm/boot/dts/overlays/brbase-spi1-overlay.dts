@@ -1,0 +1,90 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/bridgeth/base
+// for details see ...
+
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target = <&gpio>;
+        __overlay__ {
+            spi1_pins: spi1_pins {
+                brcm,pins = <19 20 21>;
+                brcm,function = <3>; /* alt4 */
+            };
+
+            spi1_cs_pins: spi1_cs_pins {
+                brcm,pins = <18 17>;
+                brcm,function = <1>; /* output */
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&spi1>;
+        frag1: __overlay__ {
+            /* needed to avoid dtc warning */
+            #address-cells = <1>;
+            #size-cells = <0>;
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi1_pins &spi1_cs_pins>;
+            cs-gpios = <&gpio 18 1>, <&gpio 17 1>;
+            status = "okay";
+
+            adin1110: adin1110@0{
+                compatible = "adi,adin1110";
+                reg = <0>; /* CE0 */
+                interrupt-parent = <&gpio>;
+                interrupts = <26 8>; /* IRQ_TYPE_LEVEL_LOW */
+                spi-max-frequency = <25000000>;
+                adi,spi-crc;
+                mac-address = [ 00 11 22 33 44 55 ];
+                status = "okay";
+                phy@1 {
+                    compatible = "ethernet-phy-id0283.bc91";
+                    reg = <0x0>;
+                };
+            };
+
+            w5100: w5100@1{
+                compatible = "wiznet,w5100";
+                reg = <1>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&w5100_pins>;
+                interrupt-parent = <&gpio>;
+                interrupts = <24 0x8>;
+                spi-max-frequency = <30000000>;
+                status = "okay";
+            };
+        };
+    };
+
+    fragment@4 {
+        target = <&gpio>;
+        __overlay__ {
+            w5100_pins: w5100_pins {
+                brcm,pins = <24>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+        };
+    };
+
+    __overrides__ {
+        cs0_pin  = <&spi1_cs_pins>,"brcm,pins:0",
+                <&frag1>,"cs-gpios:4";
+        cs1_pin  = <&spi1_cs_pins>,"brcm,pins:4",
+                <&frag1>,"cs-gpios:16";
+        cs0_spidev = <&adin1110>,"status";
+        cs1_spidev = <&w5100>,"status";
+
+        int_pin = <&w5100>, "interrupts:0",
+                    <&w5100_pins>, "brcm,pins:0";
+        speed   = <&w5100>, "spi-max-frequency:0";
+        cs      = <&w5100>, "reg:0",
+                <0>, "!0=1";
+    };
+};
