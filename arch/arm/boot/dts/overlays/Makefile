@@ -324,7 +324,8 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
 	wittypi.dtbo \
 	wm8960-soundcard.dtbo \
 	brbase-spi1.dtbo \
-	brbase-i2c1.dtbo
+	brbase-i2c1.dtbo \
+	brbase-i2c5.dtbo
 
 targets += dtbs dtbs_install
 targets += $(dtbo-y)
