@@ -41,6 +41,12 @@
                 backup-switchover-mode = <3>;
                 trickle-resistor-ohms = <3000>;
             };
+
+            tempsensor: lm75b@90 {
+                compatible = "national,lm75";
+                reg = <0x48>;
+                status = "okay";
+            };
         };
     };
 };
