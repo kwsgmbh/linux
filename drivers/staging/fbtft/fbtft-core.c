@@ -112,6 +112,9 @@ static int fbtft_request_gpios(struct fbtft_par *par)
 	ret = fbtft_request_one_gpio(par, "latch", 0, &par->gpio.latch);
 	if (ret)
 		return ret;
+	ret = fbtft_request_one_gpio(par, "im", 0, &par->gpio.im);
+	if (ret)
+		return ret;
 	for (i = 0; i < 16; i++) {
 		ret = fbtft_request_one_gpio(par, "db", i,
 					     &par->gpio.db[i]);
