@@ -1399,4 +1399,17 @@ config TOUCHSCREEN_HIMAX_HX83112B
 	  To compile this driver as a module, choose M here: the
 	  module will be called himax_hx83112b.
 
+config TOUCHSCREEN_HYNITRON_CST918
+        tristate "Hynitron CST918 touchscreen support"
+        default m
+        help
+        Say Y here if you have a touchscreen using a Hynitron
+        touchscreen controller.
+
+          If unsure, say N.
+
+          To compile this driver as a module, choose M here: the
+          module will be called hynitron-cst918
+
+
 endif
