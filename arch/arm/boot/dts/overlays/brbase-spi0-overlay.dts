@@ -1,0 +1,78 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/bridgeth/base
+// for details see ...
+
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target = <&gpio>;
+        __overlay__ {
+            spi0_pins: spi0_pins {
+                brcm,pins = <9 10 11>;
+                brcm,function = <3>; /* alt4 */
+            };
+
+            spi0_cs_pins: spi0_cs_pins {
+                brcm,pins = <8>;
+                brcm,function = <1>; /* output */
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&spi0>;
+        frag1: __overlay__ {
+            /* needed to avoid dtc warning */
+            #address-cells = <1>;
+            #size-cells = <0>;
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
+            cs-gpios = <&gpio 8 1>;
+            status = "okay";
+
+            kwsscreen: kwsscreen@0{
+                compatible = "ilitek,ili8688";
+                reg = <0>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&kwsscreen_pins>;
+                spi-max-frequency = <50000000>;
+                rotate = <0>;
+                fps = <30>;
+                buswidth = <8>;
+                regwidth = <8>;
+                bgr = <0>;
+                bpp = <24>;
+                reset-gpios = <&gpio 4 1>;
+                dc-gpios = <&gpio 6 0>;
+                im-gpios= <&gpio 22 0>;
+
+                status = "okay";
+            };
+        };
+    };
+
+    fragment@4 {
+        target = <&gpio>;
+        __overlay__ {
+            kwsscreen_pins: kwsscreen_pins {
+                brcm,pins = <6 22 4>;
+                brcm,function = <1 1 1>; /* out out out */
+            };
+        };
+    };
+
+    __overrides__ {
+        cs0_pin  = <&spi0_cs_pins>,"brcm,pins:0",
+                <&frag1>,"cs-gpios:4";
+        cs0_spidev = <&kwsscreen>,"status";
+        speed =     <&kwsscreen>,"spi-max-frequency:0";
+        rotate =    <&kwsscreen>,"rotate:0";
+        fps =       <&kwsscreen>,"fps:0";
+        debug =     <&kwsscreen>,"debug:0";
+
+    };
+};
