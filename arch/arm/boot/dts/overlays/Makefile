@@ -35,6 +35,12 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
 	audremap.dtbo \
 	balena-fin.dtbo \
 	bcm2712d0.dtbo \
+	brbase.dtbo \
+	brbase-i2c0.dtbo \
+	brbase-i2c1.dtbo \
+	brbase-i2c5.dtbo \
+	brbase-spi0.dtbo \
+	brbase-spi1.dtbo \
 	camera-mux-2port.dtbo \
 	camera-mux-4port.dtbo \
 	cap1106.dtbo \
@@ -322,13 +328,8 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
 	waveshare-can-fd-hat-mode-a.dtbo \
 	waveshare-can-fd-hat-mode-b.dtbo \
 	wittypi.dtbo \
-	wm8960-soundcard.dtbo \
-	brbase-spi1.dtbo \
-	brbase-i2c1.dtbo \
-	brbase-i2c5.dtbo \
-	brbase-i2c0.dtbo \
-	brbase-spi0.dtbo \
-	brbase.dtbo
+	wm8960-soundcard.dtbo
+
 
 targets += dtbs dtbs_install
 targets += $(dtbo-y)
