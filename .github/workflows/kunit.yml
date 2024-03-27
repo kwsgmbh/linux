@@ -4,11 +4,11 @@ on:
   pull_request:
     paths-ignore:
       - '.github/**'
-    branches: [ "BRBASE-NOWORK*" ]
+    branches: [ "BRBASE-6.6.y" ]
   push:
     paths-ignore:
       - '.github/**'
-    branches: [ "BRBASE-NOWORK*" ]
+    branches: [ "BRBASE-6.6.y" ]
   workflow_dispatch:
 
 jobs:
