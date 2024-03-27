@@ -837,6 +837,75 @@ Info:   This overlay is now deprecated - see i2c-sensor
 Load:   <Deprecated>
 
 
+Name:   brbase
+Info:   Overlay for the KWS BridgEth Base. User this overlay when you
+        want to user the HAT+ EEPROM.
+        https://kws-computer.de/produkte-2/bridgeth
+Load:   dtoverlay=brbase
+Params: <None>
+
+
+Name:   brbase-i2c0
+Info:   Overlay for the KWS BridgEth Base. To set the i2c0 to gpio and
+        not use the i2c_arm driver
+        https://kws-computer.de/produkte-2/bridgeth
+Load:   dtoverlay=brbase-i2c0
+Params: <None>
+
+
+Name:   brbase-i2c1
+Info:   Overlay for the KWS BridgEth Base. Set the i2c1 to gpio and
+        not use the i2c_arm driver and get the devices rv3028 and
+        lm75 run.
+        https://kws-computer.de/produkte-2/bridgeth
+Load:   dtoverlay=brbase-i2c1
+Params: <None>
+
+
+Name:   brbase-i2c5
+Info:   Overlay for the KWS BridgEth Base.Set the i2c5 to gpio and
+        not use the i2c_arm driver and get the tpm slb9673 run.
+        https://kws-computer.de/produkte-2/bridgeth
+Load:   dtoverlay=brbase-i2c5
+Params: <None>
+
+
+Name:   brbase-spi0
+Info:   Overlay for the KWS BridgEth Base. User this overlay when you
+        want to user the HAT+ EEPROM.
+        https://kws-computer.de/produkte-2/bridgeth
+Load:   dtoverlay=brbase-spi0
+
+Params:
+        cs0_pin                 PIO pin for CS0
+        cs0_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        debug                   Debug output level (0-7; default 0)
+        fps                     Delay between frame updates (default 25)
+        rotate                  Display rotation (0, 90, 180 or 270; default 0)
+        speed                   SPI bus speed
+
+
+Name:   brbase-spi1
+Info:   Overlay for the KWS BridgEth Base. User this overlay when you
+        want to user the HAT+ EEPROM.
+        https://kws-computer.de/produkte-2/bridgeth
+Load:   dtoverlay=brbase-spi1
+Params:
+        cs0_pin                 PIO pin for CS0
+        cs0_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        cs1_pin                 PIO pin for CS1
+        cs1_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        int_pin                 GPIO used for INT
+        speed                   SPI bus speed (default 30000000)
+        cs                      SPI bus Chip Select
+
+
 Name:   camera-mux-2port
 Info:   Configures a 2 port camera multiplexer
         Note that currently ALL IMX290 modules share a common clock, therefore
