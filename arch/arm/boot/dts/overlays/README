@@ -842,7 +842,13 @@ Info:   Overlay for the KWS BridgEth Base. User this overlay when you
         want to user the HAT+ EEPROM.
         https://kws-computer.de/produkte-2/bridgeth
 Load:   dtoverlay=brbase
-Params: <None>
+Params:
+        int_pin                 GPIO used for INT
+        speed                   SPI bus speed (default 30000000)
+        cs                      SPI bus Chip Select
+        debug                   Debug output level (0-7; default 0)
+        fps                     Delay between frame updates (default 25)
+        rotate                  Display rotation (0, 90, 180 or 270; default 0)
 
 
 Name:   brbase-i2c0
@@ -875,7 +881,6 @@ Info:   Overlay for the KWS BridgEth Base. User this overlay when you
         want to user the HAT+ EEPROM.
         https://kws-computer.de/produkte-2/bridgeth
 Load:   dtoverlay=brbase-spi0
-
 Params:
         cs0_pin                 PIO pin for CS0
         cs0_spidev              Set to 'off' to stop the creation of a
