@@ -284,8 +284,8 @@ static int i2c_worker_thread(void *data) {
         if (interrupt_occurred) {
             if (iAnzIRQ == 1)
             {
-                unsigned short addr_list[] = { 0x1A, -1 };
-                adapter = i2c_get_adapter(0);
+                unsigned short addr_list[] = { TSP_ADDR, -1 };
+                adapter = i2c_get_adapter(I2C_BUS_NUM);
                 // Initialisierung des I2C-Client
                 if (!adapter) {
                     pr_err("Could not find I2C adapter\n");
@@ -293,7 +293,7 @@ static int i2c_worker_thread(void *data) {
                     return -1;
                 }
                 i2c_client = i2c_new_scanned_device(adapter, &(struct i2c_board_info) {
-                    I2C_BOARD_INFO("cst918_touch", 0x1A)
+                    I2C_BOARD_INFO("cst918_touch", TSP_ADDR)
                 }, addr_list, NULL);
                 i2c_put_adapter(adapter);
 
