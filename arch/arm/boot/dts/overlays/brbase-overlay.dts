@@ -8,67 +8,37 @@
         fragment@0 {
                 target = <&gpio>;
                 __overlay__ {
-                        spi0_pins: spi0_pins {
-                                brcm,pins = <9 10 11>;
-                                brcm,function = <3>;
-                        };
-                        spi0_cs_pins: spi0_cs_pins {
-                                brcm,pins = <8>;
-                                brcm,function = <1>;
-                        };
-                };
-        };
-        fragment@1 {
-                target = <&spi0>;
-                __overlay__ {
-                        #address-cells = <1>;
-                        #size-cells = <0>;
-                        pinctrl-names = "default";
-                        pinctrl-0 = <&spi0_pins &spi0_cs_pins>;
-                        cs-gpios = <&gpio 8 1>;
-                        status = "okay";
-                        kwsscreen: kwsscreen@0 {
-                                compatible = "ilitek,ili8688";
-                                reg = <0>;
-                                pinctrl-names = "default";
-                                pinctrl-0 = <&kwsscreen_pins>;
-                                spi-max-frequency = <50000000>;
-                                rotate = <0>;
-                                fps = <30>;
-                                buswidth = <8>;
-                                regwidth = <8>;
-                                bgr = <0>;
-                                bpp = <24>;
-                                reset-gpios = <&gpio 4 1>;
-                                dc-gpios = <&gpio 6 0>;
-                                im-gpios = <&gpio 22 0>;
-                                status = "okay";
-                        };
-                };
-        };
-        fragment@2 {
-                target = <&gpio>;
-                __overlay__ {
+
                         kwsscreen_pins: kwsscreen_pins {
-                                brcm,pins = <6 22 4>;
-                                brcm,function = <1 1 1>;
+                            brcm,pins = <6 22 4>;
+                            brcm,function = <1 1 1>; /* out out out */
                         };
-                };
-        };
-        fragment@3 {
-                target = <&gpio>;
-                __overlay__ {
+
                         spi1_pins: spi1_pins {
                                 brcm,pins = <19 20 21>;
                                 brcm,function = <3>;
                         };
+
                         spi1_cs_pins: spi1_cs_pins {
                                 brcm,pins = <18 17>;
                                 brcm,function = <1>;
                         };
+
+                        w5100_pins: w5100_pins {
+                                brcm,pins = <24>;
+                                brcm,function = <0>;
+                                brcm,pull = <0>;
+                        };
+
+                        slb9673_pins: slb9673_pins {
+                                brcm,pins = <23>;
+                                brcm,function = <0>;
+                                brcm,pull = <2>;
+                        };
                 };
         };
-        fragment@4 {
+
+        fragment@1 {
                 target = <&spi1>;
                 __overlay__ {
                         #address-cells = <1>;
@@ -82,7 +52,7 @@
                                 reg = <0>;
                                 interrupt-parent = <&gpio>;
                                 interrupts = <26 8>;
-                                spi-max-frequency = <25000000>;
+                                //spi-max-frequency = <25000000>;
                                 adi,spi-crc;
                                 mac-address = [00 11 22 33 44 55];
                                 status = "okay";
@@ -98,28 +68,20 @@
                                 pinctrl-0 = <&w5100_pins>;
                                 interrupt-parent = <&gpio>;
                                 interrupts = <24 0x8>;
-                                spi-max-frequency = <30000000>;
+                                //spi-max-frequency = <30000000>;
                                 status = "okay";
                         };
                 };
         };
-        fragment@5 {
-                target = <&gpio>;
-                __overlay__ {
-                        w5100_pins: w5100_pins {
-                                brcm,pins = <24>;
-                                brcm,function = <0>;
-                                brcm,pull = <0>;
-                        };
-                };
-        };
-        fragment@6 {
+
+        fragment@2 {
                 target = <&i2c_arm>;
                 __overlay__ {
                         status = "disabled";
                 };
         };
-        fragment@7 {
+
+        fragment@3 {
                 target-path = "/";
                 __overlay__ {
                         i2c-gpio@0 {
@@ -130,17 +92,7 @@
                                 clock-frequency = <400000>;
                                 status = "okay";
                         };
-                };
-        };
-        fragment@8 {
-                target = <&i2c_arm>;
-                __overlay__ {
-                        status = "disabled";
-                };
-        };
-        fragment@9 {
-                target-path = "/";
-                __overlay__ {
+
                         i2c1: i2c-gpio@1 {
                                 #address-cells = <1>;
                                 #size-cells = <0>;
@@ -149,9 +101,19 @@
                                 clock-frequency = <400000>;
                                 status = "okay";
                         };
+
+                        i2c5: i2c-gpio@5 {
+                                #address-cells = <1>;
+                                #size-cells = <0>;
+                                compatible = "i2c-gpio";
+                                gpios = <&gpio 12 6>, <&gpio 13 6>;
+                                clock-frequency = <400000>;
+                                status = "okay";
+                        };
                 };
         };
-        fragment@10 {
+
+        fragment@4 {
                 target = <&i2c1>;
                 __overlay__ {
                         #address-cells = <1>;
@@ -169,36 +131,8 @@
                         };
                 };
         };
-        fragment@11 {
-                target = <&i2c_arm>;
-                __overlay__ {
-                        status = "disabled";
-                };
-        };
-        fragment@12 {
-                target-path = "/";
-                __overlay__ {
-                        i2c5: i2c-gpio@5 {
-                                #address-cells = <1>;
-                                #size-cells = <0>;
-                                compatible = "i2c-gpio";
-                                gpios = <&gpio 12 6>, <&gpio 13 6>;
-                                clock-frequency = <400000>;
-                                status = "okay";
-                        };
-                };
-        };
-        fragment@13 {
-                target = <&gpio>;
-                __overlay__ {
-                        slb9673_pins: slb9673_pins {
-                                brcm,pins = <23>;
-                                brcm,function = <0>;
-                                brcm,pull = <2>;
-                        };
-                };
-        };
-        fragment@14 {
+
+        fragment@5 {
                 target = <&i2c5>;
                 __overlay__ {
                         #address-cells = <1>;
@@ -214,13 +148,61 @@
                         };
                 };
         };
-        __overrides__ {
 
-                rotate = <&kwsscreen>, "rotate:0";
-                fps = <&kwsscreen>, "fps:0";
-                debug = <&kwsscreen>, "debug:0";
+        fragment@6 {
+            target = <&spi0>;
+            __overlay__ {
+                status = "okay";
+            };
+        };
+
+        fragment@7 {
+            target = <&spidev0>;
+            __overlay__ {
+                status = "disabled";
+            };
+        };
+
+        fragment@8 {
+            target = <&spidev1>;
+            __overlay__ {
+                status = "disabled";
+            };
+        };
+
+        fragment@9 {
+        target = <&spi0>;
+        frag1: __overlay__ {
+            /* needed to avoid dtc warning */
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            kwsscreen: kwsscreen@0{
+                compatible = "ilitek,ili8688";
+                reg = <0>;
+                pinctrl-names = "default";
+                pinctrl-0 = <&kwsscreen_pins>;
+                spi-max-frequency = <50000000>;
+                rotate = <0>;
+                fps = <30>;
+                buswidth = <8>;
+                regwidth = <8>;
+                bgr = <0>;
+                bpp = <24>;
+                reset-gpios = <&gpio 4 1>;
+                dc-gpios = <&gpio 6 0>;
+                im-gpios= <&gpio 22 0>;
+
+                status = "okay";
+            };
+        };
+    };
+
+        __overrides__ {
                 int_pin = <&w5100>, "interrupts:0", <&w5100_pins>, "brcm,pins:0";
-                speed = <&w5100>, "spi-max-frequency:0";
                 cs = <&w5100>, "reg:0", <0>, "!0=1";
+                rotate =    <&kwsscreen>,"rotate:0";
+                fps =       <&kwsscreen>,"fps:0";
+                debug =     <&kwsscreen>,"debug:0";
         };
 };

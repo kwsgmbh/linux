@@ -844,7 +844,6 @@ Info:   Overlay for the KWS BridgEth Base. User this overlay when you
 Load:   dtoverlay=brbase
 Params:
         int_pin                 GPIO used for INT
-        speed                   SPI bus speed (default 30000000)
         cs                      SPI bus Chip Select
         debug                   Debug output level (0-7; default 0)
         fps                     Delay between frame updates (default 25)
