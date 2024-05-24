@@ -35,6 +35,13 @@
             #address-cells = <1>;
             #size-cells = <0>;
 
+            rv3028@54 {
+                compatible = "microcrystal,rv3028";
+                reg = <0x52>;
+                backup-switchover-mode = <3>;
+                trickle-resistor-ohms = <3000>;
+            };
+
             tempsensor: lm75b@90 {
                 compatible = "national,lm75";
                 reg = <0x48>;
