@@ -1,0 +1,45 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/die-quadras-story/
+// for details see ...
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target = <&i2c_arm>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    fragment@1 {
+        target-path = "/";
+        __overlay__ {
+            i2c1: i2c-gpio@1 {
+                #address-cells = <1>;
+                #size-cells = <0>;
+                compatible = "i2c-gpio";
+                gpios = <&gpio 2 6>, /* SDA GPIO_OPEN_DRAIN */
+                        <&gpio 3 6>; /* CLK GPIO_OPEN_DRAIN */
+                clock-frequency = <400000>;
+                status = "okay";
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            tempsensor: lm75b@90 {
+                compatible = "national,lm75";
+                reg = <0x48>;
+                status = "okay";
+            };
+        };
+    };
+};

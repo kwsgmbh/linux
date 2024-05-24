@@ -3856,6 +3856,13 @@ Load:   dtoverlay=qca7000-uart0,<param>=<val>
 Params: baudrate                Set the baudrate for the UART (default
                                 "115200")
 
+Name:   quadraspi-i2c1
+Info:   Overlay for the KWS Quadras Pi. Set the i2c1 to gpio and
+        not use the i2c_arm driver and get the devices lm75 run.
+        https://kws-computer.de/produkte-2/die-quadras-story/
+Load:   dtoverlay=brbase-i2c1
+Params: <None>
+
 
 Name:   ramoops
 Info:   Enable the preservation of crash logs across a reboot. With
