@@ -1,0 +1,97 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/die-quadras-story/
+// for details see ...
+
+/dts-v1/;
+/plugin/;
+
+
+/ {
+    compatible = "brcm,bcm2711";
+
+    fragment@0 {
+        target = <&spi5_cs_pins>;
+        frag0: __overlay__ {
+            brcm,pins = <12 26>;
+            brcm,function = <1>; /* output */
+        };
+    };
+
+    fragment@1 {
+        target = <&spi5>;
+        frag1: __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi5_pins &spi5_cs_pins>;
+            cs-gpios = <&gpio 12 1>, <&gpio 26 1>;
+            status = "okay";
+
+            max22192: max22192@0 {
+                compatible = "max22192";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max22192_pins_spi5>;
+                reg = <0>;      /* CE0 */
+                #address-cells = <1>;
+                #size-cells = <0>;
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                // wirebreak-inputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+
+                fault-gpio = <&gpio 23 0>;
+                status = "okay";
+
+                gpio-line-names ="24V_Input_9","24V_Input_10","24V_Input_11","24V_Input_12","24V_Input_13","24V_Input_14","24V_Input_15","24V_Input_16";
+            };
+
+            max14915: max14915@1 {
+                compatible = "max14915";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max14915_pins_spi5>;
+                reg = <1>;      /* CE1 */
+                #address-cells = <1>;
+                #size-cells = <0>;
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                #device-addr = <2>;
+                //fault-gpio = <&gpio 4 0>;
+                // wirebreak-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                // vdd-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                vdd-limit = <12>;
+                wires_pullup = <300>;
+                status = "okay";
+
+                gpio-line-names ="24V_Output_9","24V_Output_10","24V_Output_11","24V_Output_12","24V_Output_13","24V_Output_14","24V_Output_15","24V_Output_16";
+            };
+        };
+    };
+
+    fragment@3 {
+        target = <&gpio>;
+        __overlay__ {
+            max22192_pins_spi5: max22192_pins_spi5 {
+                brcm,pins = <23>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+
+            max14915_pins_spi5: max14915_pins_spi5 {
+                brcm,pins = <4>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+        };
+    };
+
+    __overrides__ {
+        cs0_pin  = <&frag0>,"brcm,pins:0",
+               <&frag1>,"cs-gpios:4";
+        cs1_pin  = <&frag0>,"brcm,pins:4",
+               <&frag1>,"cs-gpios:16";
+        cs0_spidev = <&max22192>,"status";
+        cs1_spidev = <&max14915>,"status";
+        speed   = <&max14915>, "spi-max-frequency:0";
+    };
+};
