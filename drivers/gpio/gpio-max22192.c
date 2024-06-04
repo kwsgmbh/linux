@@ -522,7 +522,6 @@ static int max22192_gpio_probe(struct spi_device* spi)
     if (!pdata || !pdata->base)
     {
         pdata = of_gpio_max22192(&spi->dev);
-        dev_err(&spi->dev, "incorrect or missing platform data\n");
     }
 
     /*
@@ -544,7 +543,7 @@ static int max22192_gpio_probe(struct spi_device* spi)
     max22192->latch_gpio = of_get_named_gpio(pp, "latch-gpio", 0);
     if (max22192->latch_gpio < 0)
     {
-        dev_err(&spi->dev, "latch-gpio not defined in dts.\n");
+        dev_warn(&spi->dev, "latch-gpio not defined in dts.\n");
     }
     else
     {

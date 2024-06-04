@@ -146,25 +146,14 @@ static int max14915_spi_write(struct max14915_chip *max, unsigned int reg,
 	max->xfer.tx_buf = &buffer;
 	max->xfer.len = sizeof(buffer);
 
-	if (0 < &max->spi_cs_gpio)
-	{
-	    gpio_set_value(max->spi_cs_gpio, 1);
-	}
 	spi_message_init(&max->spi_msg);
 	spi_message_add_tail(&max->xfer, &max->spi_msg);
 	res = spi_sync(max->spi, &max->spi_msg);
 	if (res) {
 		printk("SPI transmit error\n");
-		if (0 < &max->spi_cs_gpio)
-		{
-		    gpio_set_value(max->spi_cs_gpio, 0);
-		}
 		return res;
 	}
-	if (0 < &max->spi_cs_gpio)
-	{
-	    gpio_set_value(max->spi_cs_gpio, 0);
-	}
+
 	return res;
 }
 
@@ -485,7 +474,7 @@ static int max14915_gpio_set_out_val(struct max14915_chip *max,
 
 static int max14915_get_direction(struct gpio_chip *gpio, unsigned int offset)
 {
-	return 0; /*always output */
+	return GPIO_LINE_DIRECTION_OUT; /*always output */
 }
 
 static int max14915_direction_input(struct gpio_chip *gpio, unsigned int offset)
@@ -496,7 +485,7 @@ static int max14915_direction_input(struct gpio_chip *gpio, unsigned int offset)
 static int max14915_direction_output(struct gpio_chip *gpio,
 				     unsigned int offset, int value)
 {
-	return 0;
+	return GPIO_LINE_DIRECTION_OUT;
 }
 
 static int max14915_get(struct gpio_chip *gpio, unsigned int offset)
@@ -910,56 +899,22 @@ static int max14915_gpio_probe(struct spi_device *spi)
 
 	if (!pdata || !pdata->base) {
 		pdata = of_gpio_max14915(&spi->dev);
-		dev_err(&spi->dev, "incorrect or missing platform data\n");
-	}
-
-	max14915 = devm_kzalloc(&spi->dev, sizeof(*max14915), GFP_KERNEL);
-	if (!max14915)
-		return -ENOMEM;
-
-    ret = device_property_read_u32(&spi->dev, "spi_cs_num", &max14915->spi_cs_num);
-
-	if (0 > ret) {
-		dev_err(&spi->dev, "spi_cs_num not defined in dts.\n");
-	} else {
-		spi->chip_select = max14915->spi_cs_num;
-	}
-
-	max14915->spi_cs_gpio = of_get_named_gpio(pp, "spi_cs_gpio", 0);
-
-	if (0 > max14915->spi_cs_gpio) {
-		dev_err(&spi->dev, "spi_cs_gpio not defined in dts.\n");
-	} else {
-		ret = devm_gpio_request_one(&spi->dev, max14915->spi_cs_gpio,
-					    GPIOF_OUT_INIT_LOW,
-					    "MAX14915 SPI_CS");
-		if (ret) {
-			dev_err(&spi->dev, "unable to get spi_cs gpio\n");
-			return ret;
-		}
 	}
 
 	/*
      * bits_per_word cannot be configured in platform data
      */
-	spi->bits_per_word = 8;
+    spi->bits_per_word = 8;
 
-	if (0 < max14915->spi_cs_gpio) {
-		gpio_set_value(max14915->spi_cs_gpio, 1);
-	}
 	ret = spi_setup(spi);
-	if (ret < 0) {
-		if (0 < max14915->spi_cs_gpio)
-		{
-		    gpio_set_value(max14915->spi_cs_gpio, 0);
-		}
-		return ret;
-	}
+    if (ret < 0)
+    {
+        return ret;
+    }
 
-	if (0 < max14915->spi_cs_gpio)
-	{
-	    gpio_set_value(max14915->spi_cs_gpio, 0);
-	}
+	max14915 = devm_kzalloc(&spi->dev, sizeof(*max14915), GFP_KERNEL);
+	if (!max14915)
+		return -ENOMEM;
 
 	max14915->nchips = 1;
 	device_property_read_u32(&spi->dev, "#device-addr",
@@ -1008,6 +963,7 @@ static int max14915_gpio_probe(struct spi_device *spi)
 
 	max14915->msg = 0x00;
 
+    dev_err(&spi->dev, "Write config");
 	ret = max14915_write_config(max14915);
 	if (ret) {
 		dev_err(&spi->dev, "Failed writing to MAX14915: %d\n", ret);
@@ -1019,9 +975,11 @@ static int max14915_gpio_probe(struct spi_device *spi)
 		dev_err(&spi->dev, "Unable to register gpiochip\n");
 		goto exit_destroy;
 	}
-	dev_err(&spi->dev, "Registered gpiochip\n");
+
+    return ret;
 
 exit_destroy:
+		dev_err(&spi->dev, "exit_destroy\n");
 	mutex_destroy(&max14915->lock);
 	return ret;
 }
@@ -1045,8 +1003,11 @@ static const struct of_device_id MAXxx_of_match[] = {
 };
 MODULE_DEVICE_TABLE(of, MAXxx_of_match);
 
-static const struct spi_device_id max14915_ids[] = { { "max14915", 0 },
-						     { /* sentinel */ } };
+static const struct spi_device_id max14915_ids[] = {
+    { "max14915", 0 },
+	{ /* sentinel */ }
+};
+
 MODULE_DEVICE_TABLE(spi, max14915_ids);
 
 static struct spi_driver max14915_gpio_driver = {
