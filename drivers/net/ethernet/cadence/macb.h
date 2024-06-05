@@ -986,6 +986,34 @@ struct macb_stats {
 	u32	tx_pause_frames;
 };
 
+#define MACB_STATS_LEN	(sizeof(struct macb_stats) / 4)
+
+static const struct {
+	char string[ETH_GSTRING_LEN];
+} ethtool_macb_stats_keys[MACB_STATS_LEN] = {
+	{ "rx_pause_packets" },
+	{ "tx_packets" },
+	{ "tx_single_collisions" },
+	{ "tx_mult_collisions" },
+	{ "rx_packets" },
+	{ "rx_crc_errors" },
+	{ "rx_align_errors" },
+	{ "tx_deferred" },
+	{ "tx_late_collisions" },
+	{ "tx_excessive_collisions" },
+	{ "tx_underruns" },
+	{ "tx_carrier_err" },
+	{ "rx_resources_err" },
+	{ "rx_overruns" },
+	{ "rx_symbol_errors" },
+	{ "rx_oversize_packets" },
+	{ "rx_jabbers" },
+	{ "rx_fragments" },
+	{ "sqe_test_err" },
+	{ "rx_len_errors" },
+	{ "tx_pause_packets" },
+};
+
 struct gem_stats {
 	u32	tx_octets_31_0;
 	u32	tx_octets_47_32;
@@ -1264,6 +1292,10 @@ struct ethtool_rx_fs_list {
 	unsigned int count;
 };
 
+#ifdef CONFIG_KSZ_SWITCH
+#include "../micrel/ksz_mac.h"
+#endif
+
 struct macb {
 	void __iomem		*regs;
 	bool			native_io;
@@ -1355,6 +1387,10 @@ struct macb {
 
 	struct macb_pm_data pm_data;
 	const struct macb_usrio_config *usrio;
+
+#ifdef CONFIG_KSZ_SWITCH
+	struct ksz_mac		sw_mac;
+#endif
 };
 
 #ifdef CONFIG_MACB_USE_HWSTAMP
