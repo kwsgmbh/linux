@@ -9,6 +9,14 @@
     compatible = "brcm,bcm2711";
 
     fragment@0 {
+        target = <&spi0_cs_pins>;
+        frag0: __overlay__ {
+            brcm,pins = <8 7>;
+            brcm,function = <1>; /* output */
+        };
+    };
+
+    fragment@1 {
         target = <&gpio>;
         __overlay__ {
             max22192_pins_spi1: max22192_pins_spi1 {
@@ -25,28 +33,28 @@
         };
     };
 
-    fragment@1 {
+    fragment@2 {
         target = <&spi0>;
         __overlay__ {
             status = "okay";
         };
     };
 
-    fragment@2 {
+    fragment@3 {
         target = <&spidev0>;
         __overlay__ {
             status = "disabled";
         };
     };
 
-    fragment@3 {
+    fragment@4 {
         target = <&spidev1>;
         __overlay__ {
             status = "disabled";
         };
     };
 
-    fragment@4 {
+    fragment@5 {
         target = <&spi0>;
         frag1: __overlay__ {
             #address-cells = <1>;
@@ -92,20 +100,13 @@
         };
     };
 
-    fragment@5 {
-        target = <&spi0_cs_pins>;
-        frag0: __overlay__ {
-            brcm,pins = <8 7>;
-            brcm,function = <1>; /* output */
-        };
-    };
-
     __overrides__ {
-        cs0_pin  = <&frag5>,"brcm,pins:0",
-            <&frag4>,"cs-gpios:4";
-        cs1_pin  = <&frag5>,"brcm,pins:4",
-            <&frag4>,"cs-gpios:16";
-        no_miso = <0>,"=2";
+        cs0_pin  = <&frag0>,"brcm,pins:0",
+            <&frag1>,"cs-gpios:4";
+        cs1_pin  = <&frag0>,"brcm,pins:4",
+            <&frag1>,"cs-gpios:16";
+        cs0_spidev = <&max22192>,"status";
+        cs1_spidev = <&max14915>,"status";
         speed   = <&max14915>, "spi-max-frequency:0";
     };
 };

@@ -25,7 +25,6 @@
                 reg = <0x38>;
                 gpio-controller;
                 #gpio-cells = <2>;
-                vcc-supply = <&sd_vcc_reg>;
                 status = "okay";
 
                 gpio-line-names = "M2_CFG_0", "M2_CFg_1", "M2_CFG_2", "M2_CFG_3", "M2_Reset", "M2_W_Disable_2", "M2_W_Disable_1", "Full_Card_Power_Off";
@@ -42,7 +41,6 @@
                 compatible = "microchip,ksz9897";
                 reg = <0x5f>;
 
-                *interrupt-parent = <&gpio>;
                 interrupts = <&gpio 5 0>;
                 status = "okay";
                 ports {
@@ -59,11 +57,6 @@
                     port@2 {
                         reg = <2>;
                         label = "lan3";
-                        ethernet = <&genet>;
-                        fixed-link {
-                            speed = <1000>;
-                            full-duplex;
-                        };
                     };
                     port@3 {
                         reg = <3>;
