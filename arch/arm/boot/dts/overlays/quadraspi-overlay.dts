@@ -1,0 +1,329 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/die-quadras-story/
+// for details see ...
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/pinctrl/bcm2835.h>
+#include <dt-bindings/clock/bcm2835.h>
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target = <&i2c_arm>;
+        __overlay__ {
+            status = "activ";
+        };
+    };
+
+    fragment@1 {
+        target = <&gpio>;
+        __overlay__ {
+            spi1_cs_pins: spi1_cs_pins {
+                brcm,pins = <8 7>;
+                brcm,function = <1>; /* output */
+            };
+
+
+            spi5_cs_pins: spi5_cs_pins {
+                brcm,pins = <12 26>;
+                brcm,function = <1>; /* output */
+            };
+
+            gpclk2_pin: gpclk2_pin {
+                brcm,pins = <6>;
+                brcm,function = <4>;
+            };
+
+            pcm_pins: pcm_pins {
+                brcm,pins = <18 19 20 21>;
+                brcm,function = <4 4 4 4>;
+            };
+
+            max22192_pins_spi1: max22192_pins_spi1 {
+                brcm,pins = <22>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+
+            max14915_pins_spi1: max14915_pins_spi1 {
+                brcm,pins = <27>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+
+            max22192_pins_spi5: max22192_pins_spi5 {
+                brcm,pins = <23>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+
+            max14915_pins_spi5: max14915_pins_spi5 {
+                brcm,pins = <4>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&soc>;
+        __overlay__ {
+            reg_1v8: reg_1v8@0 {
+                compatible = "regulator-fixed";
+                regulator-name = "1v8";
+                regulator-min-microvolt = <1800000>;
+                regulator-max-microvolt = <1800000>;
+                regulator-always-on;
+            };
+        };
+    };
+
+    fragment@3 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "okay";
+
+            pca: pca@38 {
+                compatible = "nxp,pca9554";
+                reg = <0x38>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                status = "okay";
+
+                gpio-line-names = "M2_CFG_0", "M2_CFg_1", "M2_CFG_2", "M2_CFG_3", "M2_Reset", "M2_W_Disable_2", "M2_W_Disable_1", "Full_Card_Power_Off";
+            };
+
+            rtc: rv3028@54 {
+                compatible = "microcrystal,rv3028";
+                reg = <0x52>;
+                backup-switchover-mode = <3>;
+                trickle-resistor-ohms = <3000>;
+            };
+
+            sgtl5000: sgtl5000@a {
+                #sound-dai-cells = <0>;
+                compatible = "fsl,sgtl5000";
+                reg = <0x0a>;
+
+                pinctrl-names = "default";
+                pinctrl-0 = <&gpclk2_pin>;
+                clocks = <&clocks BCM2835_CLOCK_GP2>;
+                clock-names = "mclk";
+                assigned-clocks = <&clocks BCM2835_CLOCK_GP2>;
+                assigned-clock-rates = <12288000>;
+
+                micbias-resistor-k-ohms = <2>;
+                micbias-voltage-m-volts = <3000>;
+                VDDA-supply = <&vdd_3v3_reg>;
+                VDDIO-supply = <&vdd_3v3_reg>;
+                VDDD-supply = <&reg_1v8>;
+                status = "okay";
+            };
+
+            i2c_ksz9897: ksz9897@5f {
+                compatible = "microchip,ksz9897";
+                reg = <0x5f>;
+
+                interrupts = <&gpio 5 0>;
+                status = "okay";
+                ports {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    port@0 {
+                        reg = <0>;
+                        label = "lan1";
+                    };
+                    port@1 {
+                        reg = <1>;
+                        label = "lan2";
+                    };
+                    port@2 {
+                        reg = <2>;
+                        label = "lan3";
+                    };
+                    port@3 {
+                        reg = <3>;
+                        label = "lan4";
+                    };
+                    port@4 {
+                        reg = <4>;
+                        label = "lan4";
+                    };
+                };
+            };
+
+            tempsensor: lm75b@90 {
+                compatible = "national,lm75";
+                reg = <0x48>;
+                status = "okay";
+            };
+        };
+    };
+
+    fragment@4 {
+        target = <&i2s>;
+        __overlay__ {
+            clocks = <&clocks BCM2835_CLOCK_PCM>;
+            clock-names = "pcm";
+
+            pinctrl-names = "default";
+            pinctrl-0 = <&pcm_pins>;
+            status = "okay";
+        };
+    };
+
+    fragment@5 {
+        target = <&sound>;
+        __overlay__ {
+           compatible = "simple-audio-card";
+            i2s-controller = <&i2s>;
+            status = "okay";
+
+
+            simple-audio-card,name = "QuadrasPi SGTL5000";
+            simple-audio-card,format = "i2s";
+
+            simple-audio-card,bitclock-master = <&soundmaster>;
+            simple-audio-card,frame-master = <&soundmaster>;
+
+            simple-audio-card,widgets =
+                "Microphone", "Microphone Jack",
+                "Line", "Line In Jack",
+                "Headphone", "Headphone Jack",
+                "Speaker", "External Speaker";
+            simple-audio-card,routing =
+                "MIC_IN", "Microphone Jack",
+                "LINE_IN", "Line In Jack",
+                "Headphone Jack", "HP_OUT",
+                "External Speaker", "LINE_OUT";
+
+
+            dailink0_master: simple-audio-card,cpu {
+                sound-dai = <&i2s>;
+            };
+
+            soundmaster: simple-audio-card,codec {
+                sound-dai = <&sgtl5000>;
+                system-clock-frequency = <12288000>;
+            };
+        };
+    };
+
+    fragment@6 {
+        target = <&spidev0>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    fragment@7 {
+        target = <&spidev1>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    fragment@8 {
+        target = <&spi0>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            pinctrl-names = "default";
+            status = "okay";
+
+            spi1_max22192: max22192@0 {
+                compatible = "max22192";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max22192_pins_spi1 &spi1_cs_pins>;
+                cs-gpios = <&gpio 8 1>, <&gpio 7 1>;
+                reg = <0>;      /* CE0 */
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                // wirebreak-inputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+
+                fault-gpio = <&gpio 22 0>;
+                status = "okay";
+
+                gpio-line-names ="24V_Input_1","24V_Input_2","24V_Input_3","24V_Input_4","24V_Input_5","24V_Input_6","24V_Input_7","24V_Input_8";
+            };
+
+            spi1_max14915: max14915@1 {
+                compatible = "max14915";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max14915_pins_spi1>;
+                reg = <1>;      /* CE1 */
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                #device-addr = <2>;
+                fault-gpio = <&gpio 27 0>;
+                // wirebreak-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                // vdd-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                vdd-limit = <12>;
+                wires_pullup = <300>;
+                status = "okay";
+
+                gpio-line-names ="24V_Output_1","24V_Output_2","24V_Output_3","24V_Output_4","24V_Output_5","24V_Output_6","24V_Output_7","24V_Output_8";
+            };
+        };
+    };
+
+    fragment@9 {
+        target = <&spi5>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            pinctrl-names = "default";
+            pinctrl-0 = <&spi5_pins>;
+            status = "okay";
+
+            spi5_max22192: max22192@0 {
+                compatible = "max22192";
+                pinctrl-names = "default";
+                pinctrl-0 = <&spi5_pins &spi5_cs_pins>;
+                cs-gpios = <&gpio 12 1>, <&gpio 26 1>;
+                reg = <0>;      /* CE0 */
+                #address-cells = <1>;
+                #size-cells = <0>;
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                // wirebreak-inputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+
+                fault-gpio = <&gpio 23 0>;
+                status = "okay";
+
+                gpio-line-names ="24V_Input_9","24V_Input_10","24V_Input_11","24V_Input_12","24V_Input_13","24V_Input_14","24V_Input_15","24V_Input_16";
+            };
+
+            spi5_max14915: max14915@1 {
+                compatible = "max14915";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max14915_pins_spi5>;
+                reg = <1>;      /* CE1 */
+                #address-cells = <1>;
+                #size-cells = <0>;
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                #device-addr = <2>;
+                //fault-gpio = <&gpio 4 0>;
+                // wirebreak-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                // vdd-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                vdd-limit = <12>;
+                wires_pullup = <300>;
+                status = "okay";
+
+                gpio-line-names ="24V_Output_9","24V_Output_10","24V_Output_11","24V_Output_12","24V_Output_13","24V_Output_14","24V_Output_15","24V_Output_16";
+            };
+        };
+    };
+};
