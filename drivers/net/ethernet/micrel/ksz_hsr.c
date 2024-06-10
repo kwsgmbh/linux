@@ -234,10 +234,6 @@ struct hsr_node *hsr_add_node_(struct list_head *node_db, unsigned char addr[],
 	if (!node)
 		return NULL;
 
-#if 1
-dbg_msg("%s %x %02x:%02x:%02x:%02x:%02x:%02x %04x\n", __func__, (int)node,
-addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], seq_out);
-#endif
 	ether_addr_copy(node->MacAddressA, addr);
 
 	/* We are only interested in time diffs here, so use current jiffies
@@ -2425,4 +2421,3 @@ static void ksz_hsr_init(struct ksz_hsr_info *info, struct ksz_sw *sw)
 	INIT_DELAYED_WORK(&info->chk_ring, hsr_chk_ring);
 #endif
 }  /* ksz_hsr_init */
-
