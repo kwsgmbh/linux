@@ -6740,9 +6740,7 @@ static const struct dev_pm_ops macb_pm_ops = {
 static struct platform_driver macb_driver = {
 	.probe		= macb_probe,
 	.remove		= macb_remove,
-#ifdef CONFIG_KSZ_SWITCH
 	.shutdown	= macb_shutdown,
-#endif
 	.driver		= {
 		.name		= "macb",
 		.of_match_table	= of_match_ptr(macb_dt_ids),
