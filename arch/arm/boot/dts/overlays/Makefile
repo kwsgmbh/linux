@@ -216,6 +216,11 @@ dtbo-$(CONFIG_ARCH_BCM2835) += \
 	pwm1.dtbo \
 	qca7000.dtbo \
 	qca7000-uart0.dtbo \
+	quadraspi.dtbo \
+	quadraspi-i2c1.dtbo \
+	quadraspi-sound.dtbo \
+	quadraspi-spi0.dtbo \
+	quadraspi-spi5.dtbo \
 	ramoops.dtbo \
 	ramoops-pi4.dtbo \
 	rotary-encoder.dtbo \

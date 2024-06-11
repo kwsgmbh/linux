@@ -22,18 +22,23 @@ jobs:
         include:
           - name: BridgEth-Base
             arch: arm
-            defconfig: bcm2711_defconfig
+            defconfig: BridgEthBase_defconfig
             kernel: kernel7l
 
           - name: BridgEth-Base_arm64
             arch: arm64
-            defconfig: bcm2711_defconfig
+            defconfig: BridgEthBase_defconfig
             kernel: kernel8
 
-          - name: BridgEth-Base-5
+          - name: QuadrasPi
+            arch: arm
+            defconfig: QuadrasPi_defconfig
+            kernel: kernel7l
+
+          - name: QuadrasPi_arm64
             arch: arm64
-            defconfig: bcm2712_defconfig
-            kernel: kernel_2712
+            defconfig: QuadrasPi_defconfig
+            kernel: kernel8
 
     steps:
     - name: Update install

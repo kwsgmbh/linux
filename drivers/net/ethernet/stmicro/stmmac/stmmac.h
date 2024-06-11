@@ -25,6 +25,28 @@
 #include <net/xdp.h>
 #include <uapi/linux/bpf.h>
 
+#if defined(CONFIG_LAN937X_SWITCH)
+#ifndef CONFIG_KSZ_SWITCH
+#define CONFIG_KSZ_SWITCH
+#endif
+#endif
+
+#ifdef CONFIG_KSZ_SWITCH
+#if defined(CONFIG_HAVE_KSZ9897)
+#include "../../micrel/ksz_cfg_9897.h"
+#elif defined(CONFIG_HAVE_KSZ8795)
+#include "../../micrel/ksz_cfg_8795.h"
+#elif defined(CONFIG_HAVE_KSZ8895)
+#include "../../micrel/ksz_cfg_8895.h"
+#elif defined(CONFIG_HAVE_KSZ8863)
+#include "../../micrel/ksz_cfg_8863.h"
+#elif defined(CONFIG_HAVE_KSZ8463)
+#include "../../micrel/ksz_cfg_8463.h"
+#elif defined(CONFIG_HAVE_LAN937X)
+#include "../../microchip/lan937x_cfg.h"
+#endif
+#endif
+
 struct stmmac_resources {
 	void __iomem *addr;
 	u8 mac[ETH_ALEN];
@@ -332,6 +354,24 @@ struct stmmac_priv {
 	/* XDP BPF Program */
 	unsigned long *af_xdp_zc_qps;
 	struct bpf_prog *xdp_prog;
+
+#ifdef CONFIG_KSZ_SWITCH
+	struct platform_device	*sw_pdev;
+	struct stmmac_priv	*hw_priv;
+	struct ksz_port		port;
+	int			phy_addr;
+	u32			multi:2;
+	u32			promisc:1;
+	u8			opened;
+	u8			hw_multi;
+	u8			hw_promisc;
+	void			*parent;
+	struct delayed_work	promisc_reset;
+	struct ksz_sw_sysfs	sysfs;
+#ifdef CONFIG_1588_PTP
+	struct ksz_ptp_sysfs	ptp_sysfs;
+#endif
+#endif
 };
 
 enum stmmac_state {

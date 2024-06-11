@@ -3857,6 +3857,64 @@ Params: baudrate                Set the baudrate for the UART (default
                                 "115200")
 
 
+Name:   quadraspi
+Info:   Overlay for the Quadras Pi from KWS- Use this overlay when want to use
+        the HAT+ EEPROM.
+        [https://](https://kws-computer.de/produkte-2/die-quadras-story/).
+Load:   dtoverlay=quadraspi
+Params: <None>
+
+
+Name:   quadraspi-i2c1
+Info:   Overlay for the KWS Quadras Pi. Set the i2c1 to gpio and
+        not use the i2c_arm driver and get the devices lm75, pca9554
+        and rv3028 run.
+        https://kws-computer.de/produkte-2/die-quadras-story/
+Load:   dtoverlay=quadraspi-i2c1
+Params: <None>
+
+
+Name:   quadraspi-sound
+Info:   Overlay for the KWS Quadras Pi. Set the sgtl5000 run.
+        https://kws-computer.de/produkte-2/die-quadras-story/
+Load:   dtoverlay=quadraspi-sound
+Params: <None>
+
+
+Name:   quadraspi-spi0
+Info:   Overlay for the KWS Quadras Pi. Set the spi0 activ and
+        get the devices max22192 and max14915 run.
+        https://kws-computer.de/produkte-2/die-quadras-story/
+Load:   dtoverlay=quadraspi-spi0
+Params:
+        cs0_pin                 PIO pin for CS0
+        cs0_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        cs1_pin                 PIO pin for CS1
+        cs1_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        speed                   SPI bus speed
+
+
+Name:   quadraspi-spi5
+Info:   Overlay for the KWS Quadras Pi. Set the spi5 activ and
+        get the devices max22192 and max14915 run.
+        https://kws-computer.de/produkte-2/die-quadras-story/
+Load:   dtoverlay=quadraspi-spi5
+Params:
+        cs0_pin                 PIO pin for CS0
+        cs0_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        cs1_pin                 PIO pin for CS1
+        cs1_spidev              Set to 'off' to stop the creation of a
+                                userspace device node /dev/spidev0.0 (default
+                                is 'on' or enabled).
+        speed                   SPI bus speed
+
+
 Name:   ramoops
 Info:   Enable the preservation of crash logs across a reboot. With
         systemd-pstore enabled (as it is on Raspberry Pi OS) the crash logs

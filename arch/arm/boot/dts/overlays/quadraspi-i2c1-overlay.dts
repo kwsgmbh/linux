@@ -1,0 +1,79 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/die-quadras-story/
+// for details see ...
+
+/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target = <&i2c_arm>;
+        __overlay__ {
+            status = "activ";
+        };
+    };
+
+    fragment@2 {
+        target = <&i2c1>;
+        __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            pca@38 {
+                compatible = "nxp,pca9554";
+                reg = <0x38>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                status = "okay";
+
+                gpio-line-names = "M2_CFG_0", "M2_CFg_1", "M2_CFG_2", "M2_CFG_3", "M2_Reset", "M2_W_Disable_2", "M2_W_Disable_1", "Full_Card_Power_Off";
+            };
+
+            rv3028@54 {
+                compatible = "microcrystal,rv3028";
+                reg = <0x52>;
+                backup-switchover-mode = <3>;
+                trickle-resistor-ohms = <3000>;
+            };
+
+            i2c_ksz9897: ksz9897@5f {
+                compatible = "microchip,ksz9897";
+                reg = <0x5f>;
+
+                interrupts = <&gpio 5 0>;
+                status = "okay";
+                ports {
+                    #address-cells = <1>;
+                    #size-cells = <0>;
+                    port@0 {
+                        reg = <0>;
+                        label = "lan1";
+                    };
+                    port@1 {
+                        reg = <1>;
+                        label = "lan2";
+                    };
+                    port@2 {
+                        reg = <2>;
+                        label = "lan3";
+                    };
+                    port@3 {
+                        reg = <3>;
+                        label = "lan4";
+                    };
+                    port@4 {
+                        reg = <4>;
+                        label = "lan4";
+                    };
+                };
+            };
+
+            tempsensor: lm75b@90 {
+                compatible = "national,lm75";
+                reg = <0x48>;
+                status = "okay";
+            };
+        };
+    };
+};

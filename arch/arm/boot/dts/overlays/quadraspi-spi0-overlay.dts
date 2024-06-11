@@ -1,0 +1,112 @@
+// Device tree overlay for https://kws-computer.de/produkte-2/die-quadras-story/
+// for details see ...
+
+/dts-v1/;
+/plugin/;
+
+
+/ {
+    compatible = "brcm,bcm2711";
+
+    fragment@0 {
+        target = <&spi0_cs_pins>;
+        frag0: __overlay__ {
+            brcm,pins = <8 7>;
+            brcm,function = <1>; /* output */
+        };
+    };
+
+    fragment@1 {
+        target = <&gpio>;
+        __overlay__ {
+            max22192_pins_spi1: max22192_pins_spi1 {
+                brcm,pins = <22>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+
+            max14915_pins_spi1: max14915_pins_spi1 {
+                brcm,pins = <27>;
+                brcm,function = <0>; /* in */
+                brcm,pull = <0>; /* none */
+            };
+        };
+    };
+
+    fragment@2 {
+        target = <&spi0>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@3 {
+        target = <&spidev0>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    fragment@4 {
+        target = <&spidev1>;
+        __overlay__ {
+            status = "disabled";
+        };
+    };
+
+    fragment@5 {
+        target = <&spi0>;
+        frag1: __overlay__ {
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            pinctrl-names = "default";
+            status = "okay";
+
+            max22192: max22192@0 {
+                compatible = "max22192";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max22192_pins_spi1>;
+                reg = <0>;      /* CE0 */
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                // wirebreak-inputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+
+                fault-gpio = <&gpio 22 0>;
+                status = "okay";
+
+                gpio-line-names ="24V_Input_1","24V_Input_2","24V_Input_3","24V_Input_4","24V_Input_5","24V_Input_6","24V_Input_7","24V_Input_8";
+            };
+
+            max14915: max14915@1 {
+                compatible = "max14915";
+                pinctrl-names = "default";
+                pinctrl-0 = <&max14915_pins_spi1>;
+                reg = <1>;      /* CE1 */
+                spi-max-frequency = <1000000>;
+                gpio-controller;
+                #gpio-cells = <2>;
+                #device-addr = <2>;
+                fault-gpio = <&gpio 27 0>;
+                // wirebreak-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                // vdd-outputs = <1>, <2>, <3>, <4>, <5>, <6>, <7> ,<8>;
+                vdd-limit = <12>;
+                wires_pullup = <300>;
+                status = "okay";
+
+                gpio-line-names ="24V_Output_1","24V_Output_2","24V_Output_3","24V_Output_4","24V_Output_5","24V_Output_6","24V_Output_7","24V_Output_8";
+            };
+        };
+    };
+
+    __overrides__ {
+        cs0_pin  = <&frag0>,"brcm,pins:0",
+            <&frag1>,"cs-gpios:4";
+        cs1_pin  = <&frag0>,"brcm,pins:4",
+            <&frag1>,"cs-gpios:16";
+        cs0_spidev = <&max22192>,"status";
+        cs1_spidev = <&max14915>,"status";
+        speed   = <&max14915>, "spi-max-frequency:0";
+    };
+};
